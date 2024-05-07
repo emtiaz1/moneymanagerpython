@@ -149,7 +149,7 @@ class create_login:
 
 class Entry:
     def __init__(self, name, category, amount):
-        self.time = date.today()
+        self.time = date.today().strftime("%Y-%m-%d")
         self.category = category
         self.amount = amount
         self.name = name
@@ -239,12 +239,12 @@ class DisplayIncome(Display):
             df=pd.read_excel(self.filename,sheet_name=self.name)
             if len(df)!=0:
                 df['Date'] = pd.to_datetime(df['Date'])
-                self.targetdate = datetime.now().strftime("%Y-%m-%d")
-                df=df.loc[df["Date"]>=self.targetdate]
+                self.current_date = datetime.today().strftime("%Y-%m-%d")
+                df=df.loc[df["Date"]>=self.current_date]
                 if len(df)!=0:
                     print(df.to_string(index=False))
-                    self.daily_total= df.loc[df['Date']>=self.targetdate,'Amount'].sum()
-                    print(f" {self.name}'s Total Amount of Today's Income : {self.daily_total}")
+                    self.daily_total= df.loc[df['Date']>=self.current_date,'Amount'].sum()
+                    print(f" {self.name}'s Total Amount of Today's Income({self.current_date}) : {self.daily_total}")
                 else:
                     print(f" There has no daily income record for {self.name}")
             else:
@@ -256,13 +256,14 @@ class DisplayIncome(Display):
             df=pd.read_excel(self.filename,sheet_name=self.name)
             if len(df)!=0:
                 df['Date'] = pd.to_datetime(df['Date'])
-                self.current_date = datetime.now()
-                self.targetdate= self.current_date - timedelta(weeks=1)
-                df=df.loc[df["Date"]>=self.targetdate]
+                self.current_date = datetime.today()
+                # Start of the week (Monday)
+                self.start_of_week = self.current_date - timedelta(days=self.current_date.weekday())
+                df=df.loc[df["Date"]>=self.start_of_week]
                 if len(df)!=0:
                     print(df.to_string(index=False))
-                    self.weekly_total= df.loc[df['Date']>=self.targetdate,'Amount'].sum()
-                    print(f" {self.name}'s Total Amount of Weekly Income from {self.targetdate.strftime('%Y-%m-%d')} to {self.current_date.strftime('%Y-%m-%d')} : {self.weekly_total}")
+                    self.weekly_total= df.loc[df['Date']>=self.start_of_week,'Amount'].sum()
+                    print(f" {self.name}'s Total income of this week till now ({self.start_of_week.strftime('%Y-%m-%d')} to {self.current_date.strftime('%Y-%m-%d')}) : {self.weekly_total}")
                 else:
                     print(f" There has no weekly income record for {self.name}")
             else:
@@ -274,13 +275,13 @@ class DisplayIncome(Display):
             df=pd.read_excel(self.filename,sheet_name=self.name)
             if len(df)!=0:
                 df['Date'] = pd.to_datetime(df['Date'])
-                self.current_date = datetime.now()
-                self.targetdate= self.current_date - timedelta(days=30)
-                df=df.loc[df["Date"]>=self.targetdate]
+                self.current_date = datetime.today()
+                self.start_of_month = datetime(self.current_date.year, self.current_date.month, 1)
+                df=df.loc[df["Date"]>=self.start_of_month]
                 if len(df)!=0:
                     print(df.to_string(index=False))
-                    self.monthly_total= df.loc[df['Date']>=self.targetdate,'Amount'].sum()
-                    print(f" {self.name}'s Total Amount of Monthly Income from {self.targetdate.strftime('%Y-%m-%d')} to {self.current_date.strftime('%Y-%m-%d')} : {self.monthly_total}")
+                    self.monthly_total= df.loc[df['Date']>=self.start_of_month,'Amount'].sum()
+                    print(f" {self.name}'s Total income of this Month till now ({self.start_of_month.strftime('%Y-%m-%d')} to {self.current_date.strftime('%Y-%m-%d')} : {self.monthly_total}")
                 else:
                     print(f" There has no monthly income record for {self.name}")
             else:
@@ -292,13 +293,13 @@ class DisplayIncome(Display):
             df=pd.read_excel(self.filename,sheet_name=self.name)
             if len(df)!=0:
                 df['Date'] = pd.to_datetime(df['Date'])
-                self.current_date = datetime.now()
-                self.targetdate= self.current_date - timedelta(days=365)
-                df=df.loc[df["Date"]>=self.targetdate]
+                self.current_date = datetime.today()
+                self.start_of_year = datetime(self.current_date.year, 1, 1)
+                df=df.loc[df["Date"]>=self.start_of_year]
                 if len(df)!=0:
                     print(df.to_string(index=False))
-                    self.yearly_total= df.loc[df['Date']>=self.targetdate,'Amount'].sum()
-                    print(f" {self.name}'s Total Amount of Yearly Income from {self.targetdate.strftime('%Y-%m-%d')} to {self.current_date.strftime('%Y-%m-%d')} : {self.yearly_total}")
+                    self.yearly_total= df.loc[df['Date']>=self.start_of_year,'Amount'].sum()
+                    print(f" {self.name}'s Total income of this Year till now ({self.start_of_year.strftime('%Y-%m-%d')} to {self.current_date.strftime('%Y-%m-%d')}) : {self.yearly_total}")
                 else:
                     print(f" There has no yearly income record for {self.name}")
             else:
@@ -311,7 +312,7 @@ class DisplayExpense(Display):
         try:
             df=pd.read_excel(self.filename,sheet_name=self.name)
             if len(df)!=0:
-                print(df) #to remove index use df.to_string(index=False)
+                print(df) 
                 print(f" {self.name}'s Total Amount of Expense: {df.iloc[:,2].sum()}")
             else:
                 print(f" There has no expense record for {self.name}")
@@ -322,12 +323,12 @@ class DisplayExpense(Display):
             df=pd.read_excel(self.filename,sheet_name=self.name)
             if len(df)!=0:
                 df['Date'] = pd.to_datetime(df['Date'])
-                self.targetdate = datetime.now().strftime("%Y-%m-%d")
-                df=df.loc[df["Date"]>=self.targetdate]
+                self.current_date = datetime.today().strftime("%Y-%m-%d")
+                df=df.loc[df["Date"]>=self.current_date]
                 if len(df)!=0:
                     print(df.to_string(index=False))
-                    self.daily_total= df.loc[df['Date']>=self.targetdate,'Amount'].sum()
-                    print(f" {self.name}'s Total Amount of Today's Expense : {self.daily_total}")
+                    self.daily_total= df.loc[df['Date']>=self.current_date,'Amount'].sum()
+                    print(f" {self.name}'s Total Amount of Today's Expense({self.current_date}) : {self.daily_total}")
                 else:
                     print(f" There has no daily expense record for {self.name}")
             else:
@@ -339,13 +340,14 @@ class DisplayExpense(Display):
             df=pd.read_excel(self.filename,sheet_name=self.name)
             if len(df)!=0:
                 df['Date'] = pd.to_datetime(df['Date'])
-                self.current_date = datetime.now()
-                self.targetdate= self.current_date - timedelta(weeks=1)
-                df=df.loc[df["Date"]>=self.targetdate]
+                self.current_date = datetime.today()
+                # Start of the week (Monday)
+                self.start_of_week = self.current_date - timedelta(days=self.current_date.weekday())
+                df=df.loc[df["Date"]>=self.start_of_week]
                 if len(df)!=0:
                     print(df.to_string(index=False))
-                    self.weekly_total= df.loc[df['Date']>=self.targetdate,'Amount'].sum()
-                    print(f" {self.name}'s Total Amount of Weekly Expense from {self.targetdate.strftime('%Y-%m-%d')} to {self.current_date.strftime('%Y-%m-%d')} : {self.weekly_total}")
+                    self.weekly_total= df.loc[df['Date']>=self.start_of_week,'Amount'].sum()
+                    print(f" {self.name}'s Total expense of this Week till now (({self.start_of_week.strftime('%Y-%m-%d')} to {self.current_date.strftime('%Y-%m-%d')}) : {self.weekly_total}")
                 else:
                     print(f" There has no weekly expense record for {self.name}")
             else:
@@ -357,13 +359,13 @@ class DisplayExpense(Display):
             df=pd.read_excel(self.filename,sheet_name=self.name)
             if len(df)!=0:
                 df['Date'] = pd.to_datetime(df['Date'])
-                self.current_date = datetime.now()
-                self.targetdate= self.current_date - timedelta(days=30)
-                df=df.loc[df["Date"]>=self.targetdate]
+                self.current_date = datetime.today()
+                self.start_of_month= datetime(self.current_date.year,self.current_date.month,1)
+                df=df.loc[df["Date"]>=self.start_of_month]
                 if len(df)!=0:
                     print(df.to_string(index=False))
-                    self.monthly_total= df.loc[df['Date']>=self.targetdate,'Amount'].sum()
-                    print(f" {self.name}'s Total Amount of Monthly Expense from {self.targetdate.strftime('%Y-%m-%d')} to {self.current_date.strftime('%Y-%m-%d')} : {self.monthly_total}")
+                    self.monthly_total= df.loc[df['Date']>=self.start_of_month,'Amount'].sum()
+                    print(f" {self.name}'s Total expense of this Month till now ({self.start_of_month.strftime('%Y-%m-%d')} to {self.current_date.strftime('%Y-%m-%d')}) : {self.monthly_total}")
                 else:
                     print(f" There has no monthly expense record for {self.name}")
             else:
@@ -375,13 +377,13 @@ class DisplayExpense(Display):
             df=pd.read_excel(self.filename,sheet_name=self.name)
             if len(df)!=0:
                 df['Date'] = pd.to_datetime(df['Date'])
-                self.current_date = datetime.now()
-                self.targetdate= self.current_date - timedelta(days=365)
-                df=df.loc[df["Date"]>=self.targetdate]
+                self.current_date = datetime.today()
+                self.start_of_year= datetime(self.current_date.year,1,1)
+                df=df.loc[df["Date"]>=self.start_of_year]
                 if len(df)!=0:
                     print(df.to_string(index=False))
-                    self.yearly_total= df.loc[df['Date']>=self.targetdate,'Amount'].sum()
-                    print(f" {self.name}'s Total Amount of Yearly Expense from {self.targetdate.strftime('%Y-%m-%d')} to {self.current_date.strftime('%Y-%m-%d')} : {self.yearly_total}")
+                    self.yearly_total= df.loc[df['Date']>=self.start_of_year,'Amount'].sum()
+                    print(f" {self.name}'s Total expense of this Year till now ({self.start_of_year.strftime('%Y-%m-%d')} to {self.current_date.strftime('%Y-%m-%d')}) : {self.yearly_total}")
                 else:
                     print(f" There has no yearly expense record for {self.name}")
             else:
